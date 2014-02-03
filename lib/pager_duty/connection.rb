@@ -106,6 +106,7 @@ module PagerDuty
 
         conn.use ParseTimeStrings
         conn.use RaiseApiErrorOnNon200
+        conn.use FaradayMiddleware::FollowRedirects
         # json back, mashify it
         conn.response :mashify
         conn.response :json, :content_type => /\bjson$/
