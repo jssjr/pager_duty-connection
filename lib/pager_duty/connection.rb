@@ -90,7 +90,7 @@ module PagerDuty
         time = Time.zone ? Time.zone : Time
 
         TIME_KEYS.each do |key|
-          object[key] = time.parse(object[key]) if object.has_key?(key)
+          object[key] = time.parse(object[key]) if ( object.respond_to?(:has_key?) && object.has_key?(key) )
         end
       end
     end
@@ -106,13 +106,13 @@ module PagerDuty
 
         conn.use ParseTimeStrings
         conn.use RaiseApiErrorOnNon200
-        conn.use FaradayMiddleware::FollowRedirects
         # json back, mashify it
         conn.response :mashify
         conn.response :json, :content_type => /\bjson$/
         conn.use RaiseFileNotFoundOn404
 
         conn.use ConvertTimesParametersToISO8601 
+        conn.use FaradayMiddleware::FollowRedirects
         # use json
         conn.request :json
 
